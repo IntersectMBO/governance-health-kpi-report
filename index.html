@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardano Governance Health - KPI Report</title>
+    <style>
+        :root {
+            /* Intersect / Cardano inspired palette */
+            --primary-dark: #0f172a;
+            --primary-accent: #ff007a; /* Intersect-ish Magenta/Pink */
+            --secondary-accent: #3b82f6; /* Bright Blue */
+            --bg-color: #f8fafc;
+            --paper-color: #ffffff;
+            --text-main: #334155;
+            --text-heading: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 60px 80px;
+            border-radius: 4px;
+        }
+
+        /* --- Cover Page Styling --- */
+        .cover-page {
+            text-align: left;
+            padding-bottom: 80px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .cover-page::before {
+            content: "INTERSECT™";
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--text-heading);
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 40px;
+        }
+
+        .report-title {
+            font-size: 3rem;
+            line-height: 1.1;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .report-subtitle {
+            font-size: 1.5rem;
+            color: var(--secondary-accent);
+            font-weight: 500;
+            margin-bottom: 60px;
+        }
+
+        .report-meta {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-top: auto;
+            border-left: 4px solid var(--primary-accent);
+            padding-left: 20px;
+        }
+
+        .report-meta strong {
+            display: block;
+            color: var(--text-heading);
+            margin-bottom: 4px;
+        }
+
+        .report-meta p {
+            margin: 0 0 10px 0;
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-heading);
+            margin-top: 2.5em;
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--primary-dark);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--primary-accent); /* Accent color for sub-headers */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2em;
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-bottom: 1.2em;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        /* --- Table of Contents --- */
+        .toc {
+            background-color: #f8fafc;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 60px;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 0.5em;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
+            padding: 4px 0;
+        }
+
+        .toc a:hover {
+            color: var(--primary-accent);
+        }
+
+        /* --- Tables --- */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 30px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: white;
+            border: 1px solid var(--border-color);
+        }
+
+        thead {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        /* --- Highlights --- */
+        .highlight-box {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--secondary-accent);
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        /* --- Print/Mobile adjustments --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            .report-title {
+                font-size: 2rem;
+            }
+            .report-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- COVER PAGE -->
+    <div class="cover-page">
+        <div class="report-title">Cardano Governance Health<br>Key Performance Indicators</div>
+        <div class="report-subtitle">Recommendations of the Governance Health Working Group of the Cardano Civics Committee</div>
+        
+        <div class="report-meta">
+            <p><strong>By:</strong> Nicolas Cerny, Ken Erik Ølmheim, Cathy Hermstad Patanakarun, Larisa Mcfarlane, Vaibhav Solanki (Gintama)</p>
+            <p><strong>Version:</strong> 1.0</p>
+            <p><strong>Date:</strong> 3 December 2025</p>
+        </div>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#section-1">1. Executive Summary</a></li>
+            <li><a href="#section-2">2. Introduction & Context</a></li>
+            <li><a href="#section-3">3. Governance Health Measurement Framework</a></li>
+            <li><a href="#section-4">4. Overview of KPI Categories</a></li>
+            <li><a href="#section-5">5. KPI Catalogue by Category</a></li>
+            <li><a href="#section-6">6. Debated but Excluded KPIs</a></li>
+            <li><a href="#section-7">7. Data Sources, Infrastructure & Methodology</a></li>
+            <li><a href="#section-8">8. Core KPI Shortlist & Dashboard Design</a></li>
+            <li><a href="#section-9">9. Appendices</a></li>
+        </ul>
+    </div>
+
+    <!-- 1. Executive Summary -->
+    <section id="section-1">
+        <h1>1. Executive Summary</h1>
+        
+        <h3>1.1 Purpose of this Report</h3>
+        <p>This report formalizes the Key Performance Indicators (KPIs) to measure the health of Cardano Governance under CIP-1694, recorded by the Governance Health Working Group (GHWG). It translates brainstorming efforts into a structured framework, defining the key metrics required to monitor the system’s participation, decentralization, and constitutional integrity.</p>
+
+        <h3>1.2 Headline Governance Health Dimensions</h3>
+        <p>To effectively track the ecosystem's health, we map KPIs across six dimensions:</p>
+        <ul>
+            <li><strong>Ada Holder Participation:</strong> The number of ada holders and the amount of ada they control.</li>
+            <li><strong>DRep Activity:</strong> The effectiveness and independence of Delegated Representatives (DRep).</li>
+            <li><strong>SPO Participation:</strong> The engagement of Stake Pool Operators in their governance role.</li>
+            <li><strong>Governance Action & Treasury Health:</strong> The volume of budget info actions and treasury withdrawals, level of debate, and efficiency of treasury spending.</li>
+            <li><strong>Constitutional Integrity:</strong> The reliability and responsiveness of the Constitutional Committee.</li>
+            <li><strong>Tooling & UX:</strong> The accessibility and transparency of the governance interfaces.</li>
+        </ul>
+
+        <h3>1.3 Core Governance Health KPIs (Top 7)</h3>
+        <p>For the initial governance health dashboard, the following high-signal indicators are prioritized:</p>
+        <ol>
+            <li><strong>Voting Turnout (% ada):</strong> The primary signal of system legitimacy.</li>
+            <li><strong>DRep Activity Rate:</strong> Ensuring representatives are actually voting.</li>
+            <li><strong>Delegation Decentralization (Gini):</strong> Monitoring power concentration among DReps.</li>
+            <li><strong>SPO Voting Turnout:</strong> Tracking operator engagement on relevant actions.</li>
+            <li><strong>Treasury Balance Rate:</strong> Monitoring fiscal sustainability against inflows.</li>
+            <li><strong>DRep Rationale Rate:</strong> A proxy for decision-making transparency and quality.</li>
+            <li><strong>CC Voting Turnout:</strong> Tracking the participation levels of the CC members.</li>
+        </ol>
+
+        <h3>1.4 Key Insights & Risks</h3>
+        <p><strong>Participation vs. Quality:</strong> High turnout does not guarantee high-quality decisions. Metrics must pair quantitative activity with qualitative proxies (e.g., Rationale Rate, Contention Rate).</p>
+        <p><strong>Data Gaps:</strong> While on-chain data is abundant, critical "off-chain" signals (e.g., rationale quality, tooling friction) require new metadata standards and community-maintained data pipelines.</p>
+        <p><strong>Centralization Risks:</strong> Several KPIs are specifically designed to detect "herd behavior" or excessive power concentration (e.g., DRep Gini, DRep Correlation).</p>
+    </section>
+
+    <!-- 2. Introduction & Context -->
+    <section id="section-2">
+        <h1>2. Introduction & Context</h1>
+        
+        <h3>2.1 Background and Governance Health Working Group (GHWG)</h3>
+        <p>With the implementation of CIP-1694, Cardano has entered a new era of on-chain governance. The Governance Health Working Group (GHWG) was formed under the Cardano Civics Committee to objectively define what "healthy" looks like in this new context. This group serves as a neutral body to brainstorm, filter, and specify the metrics that the community should track.</p>
+        
+        <h3>2.2 Objective of this Report</h3>
+        <p>The primary objective of this report is not to define every possible metric, but to establish a foundational baseline approved by IntersectMBO CIVICS committee. This report delivers a catalog of potential indicators and highlights areas where data infrastructure needs to be built.</p>
+        <p>The immediate priority is to collaborate with explorer teams to implement standard visualizations. Subsequent efforts should focus on more complex, qualitative metrics.</p>
+        
+        <h3>2.3 Intended Audience and Use Cases</h3>
+        <ul>
+            <li><strong>Cardano Community Participants:</strong> To monitor the current status of Cardano’s governance model to determine the health and discover trends and risks earlier.</li>
+            <li><strong>Tool Builders:</strong> To understand what data points need to be indexed and visualized.</li>
+            <li><strong>Researchers:</strong> To analyze long-term trends in decentralized governance.</li>
+        </ul>
+
+        <h3>2.4 Scope and Limitations of This Version</h3>
+        <p>This document focuses on definitions and logic. It does not yet provide live data or finalized code for every metric. Some KPIs listed here are aspirational and may require tooling upgrades before they can be reliably tracked.</p>
+    </section>
+
+    <!-- 3. Governance Health Measurement Framework -->
+    <section id="section-3">
+        <h1>3. Governance Health Measurement Framework</h1>
+        
+        <h3>3.1 What We Mean by “Governance Health”</h3>
+        <p>"Governance Health" is not a single number. It is a measurement of a composite state where the system is accessible, decentralized, efficient, functioning and upholds principles of fairness, equality and protection from undue influence. A healthy system resists attack vectors, manages its economy, and accurately reflects the Cardano community's will.</p>
+
+        <h3>3.2 Governance Health Dimensions</h3>
+        <p>We organize our measurement efforts into the following buckets:</p>
+        <ul>
+            <li><strong>Participation:</strong> Are people showing up? Is the system inclusive?</li>
+            <li><strong>Distribution of Power:</strong> Is influence concentrated in too few hands (SPOs or DReps or CC)?</li>
+            <li><strong>Performance & Effectiveness:</strong> Are decisions being made in a timely manner? Is the treasury being drained or utilized effectively?</li>
+            <li><strong>Constitutional Alignment:</strong> Are the checks and balances (Constitutional Committee) functioning as intended?</li>
+            <li><strong>Tooling, UX & Data Parity:</strong> Is the barrier to entry low enough for the average user?</li>
+        </ul>
+
+        <h3>3.3 KPI Design Principles</h3>
+        <ul>
+            <li><strong>Actionable:</strong> Metrics should prompt specific questions or actions.</li>
+            <li><strong>Hard to Game:</strong> We prefer on-chain data over subjective social sentiment.</li>
+            <li><strong>Context-Aware:</strong> A single number (e.g., "turnout") is meaningless without context (e.g., "seasonality" or "wallet distribution").</li>
+        </ul>
+
+        <h3>3.4 Relationship to Future Phases</h3>
+        <p>This report focuses on "plumbing", getting the basic counts and rates correct. Future community iterations will explore "Semantic Governance," utilizing LLMs or advanced analysis to grade the quality of rationales, the sentiment of debates, and the competence of actors.</p>
+    </section>
+
+    <!-- 4. Overview of KPI Categories -->
+    <section id="section-4">
+        <h1>4. Overview of KPI Categories</h1>
+        <p>The KPIs are divided into six logical categories to ensure comprehensive coverage:</p>
+        <ul>
+            <li><strong>4.1 Category 1: Ada Holder Participation:</strong> Focuses on the "base layer" of governance, the ada holders.</li>
+            <li><strong>4.2 Category 2: DRep Insights & Activity:</strong> Focuses on the behavior, independence, and quality of the Delegated Representatives.</li>
+            <li><strong>4.3 Category 3: SPO Governance Participation:</strong> Focuses on the operators who secure the network and their specific governance duties.</li>
+            <li><strong>4.4 Category 4: Governance Action & Treasury Health:</strong> Focuses on the inputs (Governance Actions) and outputs (Constitutionality, Treasury spend) of the system.</li>
+            <li><strong>4.5 Category 5: Constitutional Committee Activity:</strong> Focuses on the specific performance of the constitutional committee.</li>
+            <li><strong>4.6 Category 6: Tooling & UX:</strong> Focuses on the friction involved in participating.</li>
+        </ul>
+    </section>
+
+    <!-- 5. KPI Catalogue by Category -->
+    <section id="section-5">
+        <h1>5. KPI Catalogue by Category</h1>
+
+        <!-- 5.1 Category 1 -->
+        <h2>5.1 Category 1 – Ada Holder Participation</h2>
+        <h3>5.1.1 Category Objective & Governance Health Relevance</h3>
+        <p>This category measures the engagement of the broader ada-holding population. High participation implies legitimacy and network security against governance attacks. However, "participation" must be analyzed to ensure it isn't just a few whales or exchanges dictating outcomes.</p>
+        
+        <h3>5.1.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Voting Turnout (% ada)</strong></td>
+                        <td>How much of the network's stake is actively participating in the governance process?</td>
+                        <td>Legitimacy / Security</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Active Stake Address Participation</strong></td>
+                        <td>How many unique stake addresses are delegated, mitigating whale-bias?</td>
+                        <td>Participation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delegation Rate (% ada)</strong></td>
+                        <td>What % of ada in circulation has been delegated to DReps?</td>
+                        <td>Participation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delegation Distribution by Wallet Size</strong></td>
+                        <td>Is governance dominated by whales or is it inclusive of smaller holders?</td>
+                        <td>Distribution of Power</td>
+                    </tr>
+                    <tr>
+                        <td><strong>New Wallet Delegation Rate</strong></td>
+                        <td>Are we successfully onboarding new participants?</td>
+                        <td>Growth</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inactive Delegated Ada</strong></td>
+                        <td>Is delegated stake "dead" (stuck with inactive or retired DReps)?</td>
+                        <td>Efficiency</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>5.1.3 Interpretation Caveats & Edge Cases</h3>
+        <ul>
+            <li><strong>Whale Skew:</strong> "Turnout" can be high even if only 5 wallets vote. Always pair Voting Turnout with Active Stake Address Participation and Distribution by Wallet Size.</li>
+            <li><strong>Abstain Ambiguity:</strong> An "Abstain" vote is technically participation, but functionally different from "Yes/No." Reporting should ideally toggle "Abstain" inclusion.</li>
+            <li><strong>Seasonality:</strong> A drop in participation might be seasonal (e.g., August holidays) rather than a sign of apathy.</li>
+        </ul>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 1.</em></p>
+
+
+        <!-- 5.2 Category 2 -->
+        <h2>5.2 Category 2 – DRep Insights & Activity</h2>
+        <h3>5.2.1 Category Objective & Relevance</h3>
+        <p>DReps are the primary decision-makers in Cardano’s governance model. This category monitors whether they are active, independent, and transparent. A healthy DRep layer features diverse voices, regular voting, and clear voting rationales.</p>
+
+        <h3>5.2.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Delegation Decentralization (Gini)</strong></td>
+                        <td>Is voting power overly concentrated in a few "Super DReps"?</td>
+                        <td>Distribution of Power</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DRep Activity Rate</strong></td>
+                        <td>Are registered DReps actually doing the job (voting)?</td>
+                        <td>Performance</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DRep Rationale Rate</strong></td>
+                        <td>Are representatives including a rationale with their votes (transparency)?</td>
+                        <td>Performance / Quality</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DRep Voting Correlation</strong></td>
+                        <td>Are DReps voting in herds or thinking independently?</td>
+                        <td>Decentralization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DRep Lifecycle Rate</strong></td>
+                        <td>Is the DRep ecosystem growing or shrinking (registrations vs. de-registrations)?</td>
+                        <td>Health / Churn</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <h3>5.2.3 Interpretation Caveats & Edge Cases</h3>
+        <ul>
+            <li><strong>Activity vs. Quality:</strong> A DRep might have 100% activity but vote randomly. This metric must be viewed alongside Rationale Rate and Voting Power.</li>
+            <li><strong>Correlation:</strong> High DRep voting correlation isn't always bad; it may simply mean the community agrees on obvious decisions. It becomes a risk signal when combined with low rational rates.</li>
+            <li><strong>Time-to-Vote:</strong> Fast voting isn't necessarily better; it might indicate a lack of deliberation.</li>
+        </ul>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 2.</em></p>
+
+        <!-- 5.3 Category 3 -->
+        <h2>5.3 Category 3 – SPO Governance Participation</h2>
+        <h3>5.3.1 Category Objective & Relevance</h3>
+        <p>SPOs have a dual role: block production and voting on specific governance actions (e.g., security parameters, no-confidence motions). This category ensures they are fulfilling their governance duties without exerting undue influence or acting as a silent monolith.</p>
+
+        <h3>5.3.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>SPO Voting Turnout</strong></td>
+                        <td>Are operators voting on Governance Actions where their approval is required (e.g., hard forks, parameters, update committee, no-confidence)?</td>
+                        <td>Participation / Security</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SPO Silent Stake Rate</strong></td>
+                        <td>How much potential voting power is left uncast?</td>
+                        <td>Efficiency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Default Stance Adoption</strong></td>
+                        <td>Are SPOs relying on "Abstain" or "No-Confidence" default voting option by delegating their rewards account?</td>
+                        <td>Engagement</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Entity Voting Power Concentration</strong></td>
+                        <td>Do multi-pool entities control a disproportionate share of the vote?</td>
+                        <td>Distribution of Power</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SPO-DRep Vote Divergence</strong></td>
+                        <td>How often do SPOs vote differently than the DReps on shared actions?</td>
+                        <td>Alignment</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 3.</em></p>
+
+        <!-- 5.4 Category 4 -->
+        <h2>5.4 Category 4 – Governance Action & Treasury Health</h2>
+        <h3>5.4.1 Category Objective & Relevance</h3>
+        <p>This category measures the system's "metabolism." It tracks the volume and velocity of all Governance Actions, the level of community consensus (contention) across all action types, and the resulting financial and sustainable health of the Cardano Treasury.</p>
+
+        <h3>5.4.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Governance Action Volume & Source</strong></td>
+                        <td>Who is submitting actions (Intersect or Founding Entities or Individuals or Projects)?</td>
+                        <td>Participation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Governance Action Contention Rate</strong></td>
+                        <td>Are we rubber-stamping or having healthy debates?</td>
+                        <td>Legitimacy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Treasury Balance Rate</strong></td>
+                        <td>Are we draining the treasury faster than we replenish it?</td>
+                        <td>Financial Health</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time-to-Enactment</strong></td>
+                        <td>What is the amount of time between submission and successful ratification and enactment?</td>
+                        <td>Efficiency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Constitutional Compliance Clarity</strong></td>
+                        <td>How often are actions rejected for constitutional reasons?</td>
+                        <td>Effectiveness</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3>5.4.3 Interpretation Caveats & Edge Cases</h3>
+        <ul>
+            <li><strong>More != Better:</strong> A high volume of Governance Actions could indicate spam.</li>
+            <li><strong>Low Contention:</strong> Could mean consensus, or it could mean apathy. Context is key.</li>
+            <li><strong>NCL (Net Change Limit):</strong> Treasury spend should ideally be benchmarked against the “Net Change Limit" baseline, which currently specifies the maximum amount of ada that can be withdrawn from the Cardano Treasury within a given time period.</li>
+        </ul>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 4.</em></p>
+
+
+        <!-- 5.5 Category 5 -->
+        <h2>5.5 Category 5 – Constitutional Committee Activity</h2>
+        <h3>5.5.1 Category Objective & Relevance</h3>
+        <p>The Constitutional Committee (CC) functions as a vital guardrail, ensuring all governance actions they can vote on adhere to the Cardano Constitution and assessing any potential violations. This category tracks their responsiveness and reliability. It is crucial to ensure the CC is not becoming a bottleneck or a centralized point of failure.</p>
+
+        <h3>5.5.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Time-to-Decision</strong></td>
+                        <td>Is the CC reviewing actions quickly enough not to block governance?</td>
+                        <td>Efficiency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CC Member Participation Rate</strong></td>
+                        <td>Are CC members, as determined by their CC hot credential, actually voting?</td>
+                        <td>Accountability</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CC Abstain Rate</strong></td>
+                        <td>Is the CC unable to determine constitutionality?</td>
+                        <td>Effectiveness</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CC Vote Agreement Rate</strong></td>
+                        <td>Is there groupthink, or do CC members vote differ on the same action?</td>
+                        <td>Independence</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CC Off-Chain Election Turnout</strong></td>
+                        <td>Does the community care about who sits on the CC?</td>
+                        <td>Legitimacy</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 5.</em></p>
+
+
+        <!-- 5.6 Category 6 -->
+        <h2>5.6 Category 6 – Tooling & UX</h2>
+        <h3>5.6.1 Category Objective & Relevance</h3>
+        <p>Governance cannot be healthy if it is inaccessible. This category tracks the "friction" of the system, how hard it is to submit a proposal, find information, or cast a vote.</p>
+
+        <h3>5.6.2 KPI Summary Table (Key KPIs)</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>KPI Name</th>
+                        <th>Governance Question</th>
+                        <th>Primary Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Submission Path Share (CLI vs GUI)</strong></td>
+                        <td>Is governance action submission accessible to non-technical users?</td>
+                        <td>Accessibility</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Proposer Onboarding Completion</strong></td>
+                        <td>Is the submission process too difficult (drop-off rate)?</td>
+                        <td>UX / Friction</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gov. Info Availability</strong></td>
+                        <td>Can community members easily find rationales and vote history?</td>
+                        <td>Transparency</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Governance Data Parity</strong></td>
+                        <td>Do different explorers show the same data (e.g. approval rates of live governance actions)?</td>
+                        <td>Reliability</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Access Friction Index</strong></td>
+                        <td>(Composite) How difficult is it to participate in Cardano governance?</td>
+                        <td>UX</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p><em>See Appendix A for full technical definitions, formulae, and data sources for Category 6.</em></p>
+    </section>
+
+    <!-- 6. Debated but Excluded KPIs -->
+    <section id="section-6">
+        <h1>6. Debated but Excluded KPIs</h1>
+        <p>The GHWG debated several metrics that were ultimately excluded from the Core list.</p>
+        
+        <h3>6.1 Rationale for Exclusion Criteria</h3>
+        <p>Metrics were generally excluded if they were:</p>
+        <ul>
+            <li><strong>Too Subjective:</strong> Relying on opinion without a clear rubric.</li>
+            <li><strong>Hard to Game-Proof:</strong> Easily manipulated by bad actors.</li>
+            <li><strong>Redundant:</strong> Providing the same signal as an existing KPI.</li>
+        </ul>
+
+        <h3>6.2 Subjective Metrics</h3>
+        <p><strong>DRep "Competence" Score:</strong> Excluded because "competence" is subjective. We replaced this with proxy metrics like Rationale Rate and Participation.</p>
+        <p><strong>Social Media Sentiment:</strong> Unattributed sentiment is prone to bot manipulation and noise. We focus on on-chain signals or signed metadata.</p>
+        
+        <h3>6.3 Redundant or Overlapping Metrics</h3>
+        <p><strong>General "Engagement" Score:</strong> Merged into specific Turnout and Active Address metrics to be more precise.</p>
+
+        <h3>6.4 Items Parked for Future Research</h3>
+        <p><strong>Rational Ada Holder Index:</strong> Determining if delegators punish SPOs/DReps for specific votes is complex and requires further study on causality.</p>
+        <p><strong>DeFi Governance Correlation:</strong> Tracking how much voting power is controlled by DeFi protocols is valuable, but it requires robust entity tagging that is not yet available.</p>
+    </section>
+
+    <!-- 7. Data Sources -->
+    <section id="section-7">
+        <h1>7. Data Sources, Infrastructure & Methodology</h1>
+        
+        <h3>7.1 On-Chain Data Sources</h3>
+        <p>The majority of KPIs rely on direct ledger data:</p>
+        <ul>
+            <li><strong>Stake Distributions:</strong> For turnout and Gini coefficients.</li>
+            <li><strong>Governance Transactions:</strong> For governance action volumes, vote counts, and treasury movements.</li>
+            <li><strong>Registration Certificates:</strong> For DRep and SPO lifecycle tracking.</li>
+        </ul>
+
+        <h3>7.2 Off-Chain Data Sources</h3>
+        <ul>
+            <li><strong>CIP-100/108 Metadata:</strong> Essential for Rationale Rate and Context.</li>
+            <li><strong>Exchange Rates:</strong> Required for Deposit Burden (ada to Fiat).</li>
+            <li><strong>Portal Analytics:</strong> Required for UX metrics (CLI vs GUI).</li>
+        </ul>
+
+        <h3>7.3 Entity Mapping & Identity Assumptions</h3>
+        <p>Some KPIs (e.g., SPO Entity Concentration) require a known registry of which stake keys belong to the same entity. The GHWG relies on community-maintained sets for these mappings.</p>
+
+        <h3>7.4 Known Data Gaps and Reliability Issues</h3>
+        <p><strong>Identity Resolution:</strong> We cannot perfectly identify unique humans, so we rely on "Active Stake Addresses," “Registered DRep Credentials,” and "Wallet Size" cohorts as proxies.</p>
+        <p><strong>Data Parity:</strong> Different explorers may currently index governance data differently. The Governance Data Parity KPI is specifically designed to highlight these discrepancies.</p>
+
+        <h3>7.5 Reproducibility and Open Methodology</h3>
+        <p>All "Core" KPIs should have open-source queries (SQL/GraphQL) available to ensure any community member can verify the numbers.</p>
+    </section>
+
+    <!-- 8. Core KPI Shortlist & Dashboard Design -->
+    <section id="section-8">
+        <h1>8. Core KPI Shortlist & Dashboard Design</h1>
+        
+        <h3>8.1 Criteria for Selecting Core KPIs</h3>
+        <p>To avoid dashboard clutter, the "Core" list is limited to metrics that are:</p>
+        <ul>
+            <li><strong>High Signal:</strong> They tell us something immediate about system health.</li>
+            <li><strong>Feasible:</strong> Data is available now or can be made available soon with minimal effort.</li>
+            <li><strong>Foundational:</strong> They serve as denominators for other metrics.</li>
+        </ul>
+
+        <h3>8.2 Selected Core KPIs by Dimension</h3>
+        <ul>
+            <li><strong>Participation:</strong> Voting Turnout (% Circulating ada)</li>
+            <li><strong>DRep Health:</strong> DRep Activity Rate (Voting Frequency)</li>
+            <li><strong>Decentralization:</strong> Delegation Decentralization (Gini)</li>
+            <li><strong>SPO Engagement:</strong> SPO Voting Turnout (on relevant actions)</li>
+            <li><strong>Financial:</strong> Treasury Balance Rate (vs Inflows/Time)</li>
+            <li><strong>Transparency:</strong> DRep Rationale Rate</li>
+            <li><strong>CC Participation:</strong> CC Voting Turnout</li>
+        </ul>
+
+        <h3>8.3 Example Governance Health Dashboard Layout</h3>
+        <ul>
+            <li><strong>Header:</strong> System Status (Epoch, Active DReps, Treasury Balance).</li>
+            <li><strong>Top Row (Health Vitals):</strong> The 6 Core KPIs with Trend Lines (e.g., Turnout ↑, Spend ↗ ).</li>
+            <li><strong>Middle Section (Drill-Down):</strong> Tabs for "Ada Holders", "DReps", "SPOs", "Actions".</li>
+            <li><strong>Footer:</strong> Links to raw data and methodology.</li>
+        </ul>
+    </section>
+
+    <!-- 9. Appendices -->
+    <section id="section-9">
+        <h1>9. Appendices</h1>
+        <p><em>(Note: Full technical definitions, formulae, and data sources as referenced in the report text are located here in the full version.)</em></p>
+        
+        <h3>B. Glossary</h3>
+        <ul>
+            <li><strong>DRep:</strong> Delegated Representative.</li>
+            <li><strong>SPO:</strong> Stake Pool Operator.</li>
+            <li><strong>CC:</strong> Constitutional Committee.</li>
+            <li><strong>CIP-1694:</strong> The Cardano Improvement Proposal establishing on-chain governance.</li>
+            <li><strong>Governance Action:</strong> A formal proposal submitted to the chain (formerly "Proposal").</li>
+            <li><strong>NCL:</strong> Net Change Limit. Set by the DReps via an info action. Defined the the maximum amount of ada that can be withdrawn from the Cardano Treasury in a specified time period (e.g. 350M ada in 2025)</li>
+        </ul>
+
+        <h3>C. Open Questions for Future Iterations</h3>
+        <ul>
+            <li><strong>Constitutional Debt:</strong> How do we define and measure "debt" in the Constitution (unresolved issues)?</li>
+            <li><strong>Rational ada holder:</strong> Does a divergence in SPO/DRep voting actually cause ada holders to move stake?</li>
+            <li><strong>Tooling Monopoly:</strong> What is the ratio of tools available for DReps vs SPOs? (e.g. 1 tool per 1000 DReps).</li>
+            <li><strong>Bubble Maps:</strong> Can we use visual bubble maps as a standard reporting tool alongside numerical KPIs?</li>
+        </ul>
+
+        <h3>D. Contributors</h3>
+        <p>We extend our gratitude to the Cardano Community members who dedicated their time to join the working group meetings, including Tevo Saks, Alex Seregin, Thomas Lindseth and Matthieu Pizenberg.</p>
+    </section>
+
+</div>
+
+</body>
+</html>
